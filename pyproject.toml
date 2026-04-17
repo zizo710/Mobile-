@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "eu-scanner"
+version = "0.1.0"
+description = "Morning scanner for European equity markets — pre-market moves and overnight news, 20 names to track."
+requires-python = ">=3.10"
+dependencies = [
+    "yfinance>=0.2.40",
+    "feedparser>=6.0.10",
+    "rich>=13.7.0",
+    "pandas>=2.0.0",
+]
+
+[project.scripts]
+eu-scan = "eu_scanner.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["eu_scanner*"]
