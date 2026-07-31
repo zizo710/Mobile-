@@ -67,6 +67,47 @@ the 2000–02 corporate/telecom bust cost the public balance sheet ~2 points;
 bigger than the last, and each was financed at progressively *lower* rates —
 a luxury that has now expired.
 
+### The 2020→2026 leg: the ratio lied
+
+The strangest stretch of the series is the most recent one. Debt held by the
+public was ~100% of GDP in FY2020 and is ~101% in FY2026 — *statistically
+flat* — yet everything beneath the ratio deteriorated:
+
+| | FY2020 | Mid-2026 | Change |
+|---|---|---|---|
+| Gross federal debt | ~$26.9T | **$39.4T** (Jul 2026) | **+$12.5T (+46%)** |
+| Debt held by public | ~$21.0T | $31.7T | +$10.7T (+51%) |
+| Public debt / GDP | ~100% | ~101% | ~flat |
+| Nominal GDP | ~$21.4T | ~$32T | +~48% |
+| Avg rate on marketable debt | ~1.7% (1.47% at the 2021 low) | **3.41%** | more than doubled |
+| Net interest | $345B (1.6% of GDP) | ~$1.0T (3.3% of GDP) | ~3x |
+| Interest share of outlays | ~5% | ~14% | ~3x |
+
+The reconciliation: cumulative deficits of roughly $13T (FY2020 $3.13T, FY2021
+$2.78T, FY2022 $1.38T, then $1.7–1.9T every year since) added 46% to the debt
+stock — while inflation added almost the same ~48% to nominal GDP, holding the
+ratio still. The ratio was rescued by the very inflation the deficits helped
+create.
+
+But the rescue was a loan, not a gift. The same inflation forced rates back
+up, and the debt is short: the average coupon on the stock has already gone
+from ~1.5% to 3.41% and is still rising as pandemic-era 0–2% paper matures
+into a 4.7% ten-year world. That mechanical rollover — not new spending — is
+why interest climbs from 14.0% of outlays in FY2026 to ~14.9% by FY2028 on
+CBO's own baseline even with no new shocks, and why interest tripled while
+the headline ratio stood still. Gross debt is currently growing ~$2.8T per
+year at full employment; the Treasury pays roughly **$3B per day** in
+interest — about what defense and education cost combined.
+
+For the bubble analysis, this stretch matters doubly. First, it shows the
+remaining escape hatch has already been used once: inflating the denominator
+is the one trick that "worked" 2020–26, and repeating it is precisely what
+the current Fed (three dissents for a hike) is positioned against. Second,
+the rollover wall means federal interest demands grow *automatically* through
+2027–28 — the exact window in which the AI complex wants to issue its ~$1.5T
+of capex debt. Both borrowers are competing for the same duration capital,
+which is how crowding-out becomes a spread-widening mechanism on schedule.
+
 ---
 
 ## 2. What 2000's balance sheet bought — the part of the analog that cannot repeat
@@ -144,3 +185,7 @@ of outcomes after the break**:
 - Historical fiscal-year ratios (2003–2023): OMB Historical Tables /
   Treasury / Federal Reserve Z.1 (household and corporate debt-to-GDP),
   standard public record.
+- [JEC — Monthly debt update, July 2026 (gross debt $39.39T; +$2.81T y/y)](https://www.jec.senate.gov/public/vendor/_accounts/JEC-R/debt/Monthly%20Debt%20Update%20(PDF).pdf)
+- [Fortune — Treasury paying ~$3B/day in interest on $39T debt (May 2026)](https://fortune.com/2026/05/11/us-treasury-debt-3-billion-daily-interest-39-trillion/)
+- [Fortune — $88B/month in interest, equal to defense plus education (Apr 2026)](https://fortune.com/2026/04/09/us-goverment-speding-interest-defense-education-total/)
+- [EPIC — Interest spending tracker FY2026 (avg marketable rate 3.411% vs 1.472% five years ago; interest 13.95%/14.25%/14.94% of outlays FY26-28)](https://epicforamerica.org/federal-budget/interest-spending-tracker-q1-of-fy-2026/)
