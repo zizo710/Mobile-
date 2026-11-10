@@ -12,10 +12,12 @@ dependencies = [
     "feedparser>=6.0.10",
     "rich>=13.7.0",
     "pandas>=2.0.0",
+    "hyperliquid-python-sdk>=0.24.0",
 ]
 
 [project.scripts]
 eu-scan = "eu_scanner.cli:main"
+hl-bot = "hl_bot.cli:main"
 
 [tool.setuptools.packages.find]
-include = ["eu_scanner*"]
+include = ["eu_scanner*", "hl_bot*"]
