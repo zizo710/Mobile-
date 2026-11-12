@@ -73,3 +73,30 @@ your book.
   This is a starting point — for a real desk, swap in your Bloomberg /
   Reuters / RNS terminal feed by extending `eu_scanner/news.py`.
 - Not investment advice. Use as a triage tool, not a signal.
+
+---
+
+# Cocoa Model
+
+Is the cocoa futures market over- or undervalued given the West African crop?
+`cocoa_model` chains three steps using only free public data:
+
+1. **Weather → harvest.** NASA POWER daily weather at 16 cocoa-belt points in
+   Côte d'Ivoire, Ghana, Nigeria and Cameroon is turned into seasonal anomalies
+   around the crop calendar (plus ENSO) and related to FAOSTAT production
+   deviations from trend: a correlation table, and a pooled ridge regression
+   scored by leave-one-year-out cross-validation.
+2. **Harvest → price.** Crop-year real cocoa prices (World Bank / ICCO) are
+   regressed on current and lagged West African supply shocks plus mean reversion.
+3. **Valuation.** The model's fair value for the coming crop year is compared
+   with the live ICE New York futures strip, with a forecast band and z-score.
+
+```bash
+python -m cocoa_model                    # writes reports/cocoa_report.md + charts
+python -m cocoa_model --refresh          # ignore the 24h data cache
+python -m cocoa_model --shock 2027=-0.08 # your own crop view: 2026/27 8% below trend
+```
+
+The latest run is in [`reports/cocoa_report.md`](reports/cocoa_report.md). Read its
+caveats: on public annual data the weather signal is weak, and the model has no
+stocks, demand or positioning data. Not investment advice.

@@ -12,10 +12,17 @@ dependencies = [
     "feedparser>=6.0.10",
     "rich>=13.7.0",
     "pandas>=2.0.0",
+    "numpy>=1.26",
+    "statsmodels>=0.14",
+    "scipy>=1.11",
+    "matplotlib>=3.8",
+    "requests>=2.31",
+    "openpyxl>=3.1",
 ]
 
 [project.scripts]
 eu-scan = "eu_scanner.cli:main"
+cocoa-model = "cocoa_model.cli:main"
 
 [tool.setuptools.packages.find]
-include = ["eu_scanner*"]
+include = ["eu_scanner*", "cocoa_model*"]
