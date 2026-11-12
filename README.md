@@ -105,11 +105,12 @@ headline model.
 python -m cocoa_model                    # writes reports/cocoa_report.md + charts
 python -m cocoa_model --refresh          # ignore the 24h data cache
 python -m cocoa_model --shock 2027=-0.08 # your own crop view: 2026/27 8% below trend
-python -m cocoa_model --backtest         # also run the long/short futures backtest
+python -m cocoa_model --backtest         # also run the futures backtests (unhedged and with options)
 ```
 
 The latest run is in [`reports/cocoa_report.md`](reports/cocoa_report.md), and the
 walk-forward backtest of a long/short futures strategy on the model's signal is in
-[`reports/backtest_report.md`](reports/backtest_report.md). Read its
+[`reports/backtest_report.md`](reports/backtest_report.md). The same strategy with
+protective puts and calls is in [`reports/hedged_report.md`](reports/hedged_report.md). Read its
 caveats: on public annual data the weather signal is weak, and the model has no
 stocks, demand or positioning data. Not investment advice.

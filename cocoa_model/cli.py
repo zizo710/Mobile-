@@ -19,7 +19,7 @@ def main(argv: list[str] | None = None) -> int:
                    help="override the West African supply shock for harvest year YEAR "
                         "(log deviation from trend, e.g. 2027=-0.08 for a crop 8%% below trend)")
     p.add_argument("--backtest", action="store_true",
-                   help="also run the walk-forward long/short futures backtest (about a minute)")
+                   help="also run the walk-forward long/short futures backtests, unhedged and with protective options (about a minute)")
     a = p.parse_args(argv)
     warnings.filterwarnings("ignore", category=FutureWarning)
 
@@ -42,4 +42,10 @@ def main(argv: list[str] | None = None) -> int:
         bpath = backtest_report.build(bt, r.val.futures_strip, Path(a.out))
         print(bt.stats[["Average return / year", "Sharpe", "Hit rate", "Max drawdown"]].round(2).to_string())
         print(f"  report: {bpath}")
+        from . import hedged, hedged_report
+
+        hg = hedged.run(bt, fut)
+        hpath = hedged_report.build(hg, bt, Path(a.out))
+        print(hg.stats[["Average return / year", "Sharpe", "Worst year", "Premium / year"]].round(3).to_string())
+        print(f"  report: {hpath}")
     return 0
