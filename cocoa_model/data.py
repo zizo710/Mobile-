@@ -150,9 +150,11 @@ PINK_COLS = {"Cocoa": "cocoa", "Sugar, world": "sugar", "Palm oil": "palm", "Ure
              "Gold": "gold", "Rubber, RSS3": "rubber"}
 
 
-def pink_sheet(refresh: bool = False) -> pd.DataFrame:
+def pink_sheet(refresh: bool = False, cols: dict[str, str] | None = None,
+               cache: str = "pink_sheet.csv") -> pd.DataFrame:
     """World Bank Pink Sheet monthly nominal prices (native units), PeriodIndex(M)."""
-    path, ok = _cached("pink_sheet.csv", 24, refresh)
+    cols = cols or PINK_COLS
+    path, ok = _cached(cache, 24, refresh)
     if ok:
         d = pd.read_csv(path, index_col=0)
         d.index = pd.PeriodIndex(d.index, freq="M")
@@ -167,7 +169,7 @@ def pink_sheet(refresh: bool = False) -> pd.DataFrame:
     names = raw.loc[hdr].astype(str).str.strip()
     body = raw[raw[0].astype(str).str.fullmatch(r"\d{4}M\d{2}")]
     out = pd.DataFrame({short: pd.to_numeric(body[names.index[names == long][0]], errors="coerce")
-                        for long, short in PINK_COLS.items()})
+                        for long, short in cols.items()})
     out.index = pd.PeriodIndex(body[0].str.replace("M", "-"), freq="M")
     out.to_csv(path)
     return out

@@ -114,3 +114,23 @@ walk-forward backtest of a long/short futures strategy on the model's signal is 
 protective puts and calls is in [`reports/hedged_report.md`](reports/hedged_report.md). Read its
 caveats: on public annual data the weather signal is weak, and the model has no
 stocks, demand or positioning data. Not investment advice.
+
+---
+
+# Copper Model
+
+The same approach applied to copper. There is no harvest, so the weather step is
+replaced by 22 candidate drivers (demand, financial conditions, relative value,
+own price history, supply) of the 12-month change in the real copper price.
+
+```bash
+python -m copper_model            # writes reports/copper_report.md + charts
+python -m copper_model --refresh  # ignore the 24h data cache
+```
+
+One run produces the fair value against the COMEX curve, a walk-forward
+quarterly long/short backtest, the same strategy with three-month tail options
+(puts under longs, calls over shorts), the current signal and what protection
+costs today. The latest run is in
+[`reports/copper_report.md`](reports/copper_report.md). It needs `cocoa_model`
+for shared download, caching and option-pricing helpers.

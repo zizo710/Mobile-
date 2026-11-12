@@ -23,6 +23,7 @@ dependencies = [
 [project.scripts]
 eu-scan = "eu_scanner.cli:main"
 cocoa-model = "cocoa_model.cli:main"
+copper-model = "copper_model.cli:main"
 
 [tool.setuptools.packages.find]
-include = ["eu_scanner*", "cocoa_model*"]
+include = ["eu_scanner*", "cocoa_model*", "copper_model*"]
