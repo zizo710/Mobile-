@@ -12,3 +12,4 @@ venv/
 !pyproject.toml
 build/
 dist/
+cocoa_model/data_cache/

@@ -73,3 +73,64 @@ your book.
   This is a starting point — for a real desk, swap in your Bloomberg /
   Reuters / RNS terminal feed by extending `eu_scanner/news.py`.
 - Not investment advice. Use as a triage tool, not a signal.
+
+---
+
+# Cocoa Model
+
+Is the cocoa futures market over- or undervalued given the West African crop?
+`cocoa_model` chains three steps using only free public data:
+
+1. **Weather → harvest.** NASA POWER daily weather at 16 cocoa-belt points in
+   Côte d'Ivoire, Ghana, Nigeria and Cameroon is turned into seasonal anomalies
+   around the crop calendar. Together with climate indices and farm economics
+   these are candidate drivers of FAOSTAT production deviations from trend.
+   Each country gets its own ridge model, built by forward selection and scored
+   by nested leave-one-year-out cross-validation; a country without
+   out-of-sample skill is held at trend.
+2. **Harvest → price.** Crop-year real cocoa prices (World Bank / ICCO) are
+   regressed on current and lagged West African supply shocks plus mean
+   reversion. Extra market variables are added only if they lower
+   out-of-sample forecast error.
+3. **Valuation.** The model's fair value for the coming crop year is compared
+   with the live ICE New York futures strip, with a forecast band and z-score.
+
+The report includes a scorecard for 20 added data points (weather extremes,
+Atlantic and Indian Ocean indices, fertiliser and cocoa prices, rest-of-world
+output, GDP, sugar, palm oil, volatility) and a test of 5 unconventional ones
+(sunspots, QBO, gold, rubber, Easter date), which are never used in the
+headline model.
+
+```bash
+python -m cocoa_model                    # writes reports/cocoa_report.md + charts
+python -m cocoa_model --refresh          # ignore the 24h data cache
+python -m cocoa_model --shock 2027=-0.08 # your own crop view: 2026/27 8% below trend
+python -m cocoa_model --backtest         # also run the futures backtests (unhedged and with options)
+```
+
+The latest run is in [`reports/cocoa_report.md`](reports/cocoa_report.md), and the
+walk-forward backtest of a long/short futures strategy on the model's signal is in
+[`reports/backtest_report.md`](reports/backtest_report.md). The same strategy with
+protective puts and calls is in [`reports/hedged_report.md`](reports/hedged_report.md). Read its
+caveats: on public annual data the weather signal is weak, and the model has no
+stocks, demand or positioning data. Not investment advice.
+
+---
+
+# Copper Model
+
+The same approach applied to copper. There is no harvest, so the weather step is
+replaced by 22 candidate drivers (demand, financial conditions, relative value,
+own price history, supply) of the 12-month change in the real copper price.
+
+```bash
+python -m copper_model            # writes reports/copper_report.md + charts
+python -m copper_model --refresh  # ignore the 24h data cache
+```
+
+One run produces the fair value against the COMEX curve, a walk-forward
+quarterly long/short backtest, the same strategy with three-month tail options
+(puts under longs, calls over shorts), the current signal and what protection
+costs today. The latest run is in
+[`reports/copper_report.md`](reports/copper_report.md). It needs `cocoa_model`
+for shared download, caching and option-pricing helpers.
