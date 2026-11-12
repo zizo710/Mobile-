@@ -46,6 +46,7 @@ class Result:
     test: Variant  # + 5 unconventional candidates
     overrides: dict[int, float]
     pooled: yield_model.YieldModel  # v1 reference: one pooled ridge on the original features
+    ypool: list[str]  # candidate pool of the headline output models
 
     @property
     def val(self) -> price_model.Valuation:
@@ -119,4 +120,4 @@ def run(refresh: bool = False, overrides: dict[int, float] | None = None) -> Res
     test = variant("…plus 5 unconventional (test)", y_conv + cand.YIELD_UNUSUAL,
                    cand.PRICE_CONVENTIONAL + cand.PRICE_UNUSUAL)
     return Result(today, prod, cycle, trend, feats, corr, known, wa_hist, price_m, price_cy, curve,
-                  pcands, enso, base, main, test, overrides, yield_model.fit(feats[y_base], cycle))
+                  pcands, enso, base, main, test, overrides, yield_model.fit(feats[y_base], cycle), y_conv)

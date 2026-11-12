@@ -292,3 +292,17 @@ def real_factor(years: np.ndarray | list[int], base_year: int) -> np.ndarray:
     last = max(US_CPI)
     cpi = lambda y: US_CPI[min(int(y), last)]  # noqa: E731
     return np.array([cpi(base_year) / cpi(y) for y in years])
+
+
+def futures_daily(refresh: bool = False) -> pd.Series:
+    """Daily close of the ICE NY front-month cocoa future (continuous, not roll-adjusted), 2000+."""
+    path, ok = _cached("futures_daily.csv", 24, refresh)
+    if ok:
+        s = pd.read_csv(path, index_col=0, parse_dates=True)["close"]
+        return s
+    r = _yahoo("CC=F", period1=0, period2=int(time.time()), interval="1d")
+    s = pd.Series(r["indicators"]["quote"][0]["close"],
+                  index=pd.to_datetime(r["timestamp"], unit="s").normalize(), name="close").dropna()
+    s = s[~s.index.duplicated(keep="last")]
+    s.to_csv(path)
+    return s
