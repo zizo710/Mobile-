@@ -41,6 +41,8 @@ POWER_PARAMS = {
     "RH2M": "rh",  # %
     "GWETROOT": "soil",  # root-zone soil wetness, 0-1
     "ALLSKY_SFC_SW_DWN": "rad",  # MJ/m²/day
+    "T2M_MIN": "tmin",  # °C
+    "WS2M": "wind",  # m/s
 }
 
 # Weather windows relative to harvest year H (crop year Oct(H-1)..Sep(H); FAOSTAT year H).
@@ -56,6 +58,8 @@ WINDOWS: list[tuple[str, list[tuple[int, int]], str]] = [
     ("dry1", [(-1, 11), (-1, 12), (0, 1), (0, 2), (0, 3)],
      "Harmattan dry season (Nov H-1 – Mar H): main-crop tail, mid-crop set"),
     ("rains3", [(0, 4), (0, 5), (0, 6)], "Apr–Jun H: mid-crop development"),
+    ("enddry0", [(-1, 2), (-1, 3)], "Feb–Mar H-1: end of the dry season, moisture at season start"),
+    ("season", [(-1, m) for m in range(4, 11)], "Apr–Oct H-1: whole main-crop growing season"),
 ]
 
 # (feature name, variable, window, squared?)
@@ -74,6 +78,19 @@ FEATURES: list[tuple[str, str, str, bool]] = [
     ("rh_dry1", "rh", "dry1", False),
     ("rain_rains3", "rain", "rains3", False),
 ]
+# Additional weather candidates: (name, monthly variable, window, aggregation)
+EXTRA_WEATHER: list[tuple[str, str, str, str]] = [
+    ("dryspell_rains1", "dryrun", "rains1", "max"),
+    ("heavy_rains2", "heavy", "rains2", "sum"),
+    ("vpd_dry1", "vpd", "dry1", "mean"),
+    ("wind_dry1", "wind", "dry1", "mean"),
+    ("tmin_rains1", "tmin", "rains1", "mean"),
+    ("wbal_season", "wbal", "season", "sum"),
+    ("heatdays_dry0", "heat", "dry0", "sum"),
+    ("soil_enddry0", "soil", "enddry0", "mean"),
+]
+SUM_VARS = {"rain", "heavy", "heat", "wbal"}
+
 ONI_MONTHS = [(-1, m) for m in (6, 7, 8, 9, 10)]  # ENSO state Jun–Oct of H-1
 
 # US CPI-U annual average (1982-84=100), BLS. 2025-26 are approximations.

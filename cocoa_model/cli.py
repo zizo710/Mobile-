@@ -25,13 +25,11 @@ def main(argv: list[str] | None = None) -> int:
 
     r = pipeline.run(refresh=a.refresh, overrides=dict(a.shock))
     path = report.build(r, Path(a.out))
-    v, ve, t = r.val, r.val_enso, r.val.target_year
-    print(f"Cocoa crop year {t - 1}/{t % 100:02d}")
-    print(f"  weather->output skill   CV R2 {r.ym.cv_r2:+.2f}")
-    print(f"  W. Africa supply nowcast {r.wa_nowcast[t]:+.1%} vs trend")
-    print(f"  futures strip           ${v.futures_strip:,.0f}/t")
-    print(f"  fair value              ${v.fair_value:,.0f}/t  (68%: ${v.band68[0]:,.0f}-${v.band68[1]:,.0f})"
-          f"  -> {v.verdict} ({v.mispricing_pct:+.1%}, z {v.z:+.2f})")
-    print(f"  fair value incl. ENSO   ${ve.fair_value:,.0f}/t  -> {ve.verdict} ({ve.mispricing_pct:+.1%}, z {ve.z:+.2f})")
+    t = r.val.target_year
+    print(f"Cocoa crop year {t - 1}/{t % 100:02d}   futures strip ${r.val.futures_strip:,.0f}/t")
+    for var in (r.base, r.main, r.test):
+        v = var.val
+        print(f"  {var.name:<34} W.Africa skill r={var.wa_corr:+.2f}  nowcast {var.wa_nowcast[t]:+.1%}  "
+              f"fair ${v.fair_value:,.0f} -> {v.verdict} ({v.mispricing_pct:+.1%}, z {v.z:+.2f})")
     print(f"  report: {path}")
     return 0

@@ -83,13 +83,23 @@ Is the cocoa futures market over- or undervalued given the West African crop?
 
 1. **Weather → harvest.** NASA POWER daily weather at 16 cocoa-belt points in
    Côte d'Ivoire, Ghana, Nigeria and Cameroon is turned into seasonal anomalies
-   around the crop calendar (plus ENSO) and related to FAOSTAT production
-   deviations from trend: a correlation table, and a pooled ridge regression
-   scored by leave-one-year-out cross-validation.
+   around the crop calendar. Together with climate indices and farm economics
+   these are candidate drivers of FAOSTAT production deviations from trend.
+   Each country gets its own ridge model, built by forward selection and scored
+   by nested leave-one-year-out cross-validation; a country without
+   out-of-sample skill is held at trend.
 2. **Harvest → price.** Crop-year real cocoa prices (World Bank / ICCO) are
-   regressed on current and lagged West African supply shocks plus mean reversion.
+   regressed on current and lagged West African supply shocks plus mean
+   reversion. Extra market variables are added only if they lower
+   out-of-sample forecast error.
 3. **Valuation.** The model's fair value for the coming crop year is compared
    with the live ICE New York futures strip, with a forecast band and z-score.
+
+The report includes a scorecard for 20 added data points (weather extremes,
+Atlantic and Indian Ocean indices, fertiliser and cocoa prices, rest-of-world
+output, GDP, sugar, palm oil, volatility) and a test of 5 unconventional ones
+(sunspots, QBO, gold, rubber, Easter date), which are never used in the
+headline model.
 
 ```bash
 python -m cocoa_model                    # writes reports/cocoa_report.md + charts

@@ -2,13 +2,12 @@
 
 Annual, by crop year H (Oct H-1 .. Sep H), in real (CPI-deflated) US$:
 
-    dlog P_H = a + b1*S_H + b2*S_(H-1) + g*log P_(H-1) [+ d*ONI_(H-1)] + e
+    dlog P_H = a + b1*S_H + b2*S_(H-1) + g*log P_(H-1) [+ selected extras] + e
 
 S    = West African production deviation from trend (log points)
 logP = lagged real price level (mean reversion: high prices ration demand and
        pull in supply; g < 0)
-ONI  = optional ENSO term (Jun-Oct before the crop year) - the one weather signal
-       that is known ahead of the harvest and has a detectable price footprint
+extras = further variables that passed selection (see selection.py)
 
 Fair value for the coming crop year = model expectation given the nowcast S.
 The futures strip covering that crop year is then compared with it.
@@ -50,9 +49,11 @@ class Valuation:
     frame: pd.DataFrame
     prev_price: float
     components: dict[str, float]
+    inputs: pd.Series
+    filled: list[str]
 
 
-def _frame(price_cy: pd.Series, shock: pd.Series, base_year: int, oni: pd.Series) -> pd.DataFrame:
+def frame(price_cy: pd.Series, shock: pd.Series, base_year: int, extras: pd.DataFrame) -> pd.DataFrame:
     yrs = sorted(set(price_cy.index) | set(shock.index))
     f = pd.DataFrame(index=yrs)
     f["nominal"] = price_cy
@@ -61,23 +62,25 @@ def _frame(price_cy: pd.Series, shock: pd.Series, base_year: int, oni: pd.Series
     f["S"] = shock
     f["S_lag"] = f["S"].shift(1)
     f["lp_lag"] = f["lp"].shift(1)
-    f["oni"] = oni
-    return f
+    return f.join(extras)
 
 
-def value(price_cy: pd.Series, shock_hist: pd.Series, shock_fcst: pd.Series,
-          strip: float, target_year: int, shock_sd: float, oni: pd.Series,
-          with_enso: bool = False) -> Valuation:
+def value(price_cy: pd.Series, shock_hist: pd.Series, shock_fcst: pd.Series, strip: float,
+          target_year: int, shock_sd: float, extras: pd.DataFrame, extra_cols: list[str]) -> Valuation:
     """shock_hist: observed W. Africa production cycle (fits the model).
-    shock_fcst: weather-model shocks for years after the FAOSTAT sample.
-    shock_sd:   s.d. of the weather model's error on the aggregate shock."""
-    cols = BASE_COLS + (["oni"] if with_enso else [])
-    fit_df = _frame(price_cy, shock_hist, target_year, oni).dropna(subset=["dlp"] + cols)
+    shock_fcst: model shocks for years after the FAOSTAT sample.
+    shock_sd:   s.d. of the output model's error on the aggregate shock.
+    extras:     year-indexed candidate variables; extra_cols are the ones to include."""
+    cols = BASE_COLS + list(extra_cols)
+    fit_df = frame(price_cy, shock_hist, target_year, extras).dropna(subset=["dlp"] + cols)
     ols = sm.OLS(fit_df["dlp"], sm.add_constant(fit_df[cols])).fit()
 
-    full = _frame(price_cy, pd.concat([shock_hist, shock_fcst[~shock_fcst.index.isin(shock_hist.index)]]),
-                  target_year, oni)
-    row = full.loc[target_year, cols]
+    full = frame(price_cy, pd.concat([shock_hist, shock_fcst[~shock_fcst.index.isin(shock_hist.index)]]),
+                 target_year, extras)
+    row = full.loc[target_year, cols].copy()
+    filled = [c for c in extra_cols if pd.isna(row[c])]
+    for c in filled:  # not yet observed: neutral (sample mean; zero for supply shocks)
+        row[c] = 0.0 if c.startswith("S_") else fit_df[c].mean()
     if row.isna().any():
         raise RuntimeError(f"cannot value {target_year}: missing inputs {row[row.isna()].index.tolist()}")
     b = ols.params
@@ -98,13 +101,7 @@ def value(price_cy: pd.Series, shock_hist: pd.Series, shock_fcst: pd.Series,
         verdict = "modestly undervalued"
     else:
         verdict = "roughly fairly valued"
-    comps = {"drift": float(b["const"]), "current-crop shock": float(b["S"] * row["S"]),
-             "previous-crop shock": float(b["S_lag"] * row["S_lag"]),
-             "mean reversion": float(b["lp_lag"] * row["lp_lag"])}
-    comps["drift"] += comps.pop("mean reversion")  # constant + level term = pull to long-run mean
-    comps["mean reversion"] = comps.pop("drift")
-    if with_enso:
-        comps["ENSO"] = float(b["oni"] * row["oni"])
+    comps = {c: float(b[c] * (row[c] - fit_df[c].mean())) for c in cols}  # effect vs an average year
     return Valuation(target_year, float(fair), band(1.0), band(1.645), strip,
                      float(strip / fair - 1), z, float(norm.cdf(z)), verdict, sigma, ols, full,
-                     prev_real, comps)
+                     prev_real, comps, row, filled)
